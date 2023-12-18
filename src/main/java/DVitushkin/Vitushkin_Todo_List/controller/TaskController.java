@@ -1,6 +1,7 @@
 package DVitushkin.Vitushkin_Todo_List.controller;
 
 import DVitushkin.Vitushkin_Todo_List.dto.ChangeStatusTodoDto;
+import DVitushkin.Vitushkin_Todo_List.dto.ChangeTextTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.CreateTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.GetNewsDto;
 import DVitushkin.Vitushkin_Todo_List.models.Task;
@@ -54,16 +55,37 @@ public class TaskController {
         return new CustomSuccessResponse<>(200, true, getNewsDto);
     }
 
+    //    PATCH /v1/todo/status/{id} patchStatus
+    @PatchMapping("v1/todo/status/{id}")
+    public BaseSuccessResponse patchStatusById(@PathVariable("id") int id, @RequestBody ChangeStatusTodoDto changeStatusTodoDto) {
+        service.setStatusById(id, changeStatusTodoDto.isStatus());
+
+        return new BaseSuccessResponse(200, true);
+    }
+    //    PATCH /v1/todo/text/{id} patchText
+    @PatchMapping("v1/todo/text/{id}")
+    public BaseSuccessResponse patchTextById(@PathVariable("id") int id, @RequestBody ChangeTextTodoDto changeTextTodoDto) {
+        service.setTextById(id, changeTextTodoDto.getText());
+        return new BaseSuccessResponse(200, true);
+    }
+
+    //    DELETE /v1/todo/{id} delete
+    @DeleteMapping("v1/todo/{id}")
+    public BaseSuccessResponse deleteTaskById(@PathVariable("id") int id) {
+        service.deleteTaskById(id);
+        return new BaseSuccessResponse(200, true);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-            Map<String, String> errors = new HashMap<>();
-            ex.getBindingResult().getAllErrors().forEach((error) -> {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
-            });
-            return errors;
+        });
+        return errors;
     }
 }
