@@ -46,6 +46,14 @@ public class TaskController {
         service.deleteAllReadyTasks();
         return new BaseSuccessResponse(200, true);
     }
+
+    //    GET /v1/todo getPaginated
+    @GetMapping("v1/todo")
+    public CustomSuccessResponse<GetNewsDto> getPaginated(@RequestParam("page") int page, @RequestParam("perPage") int perPage) {
+        GetNewsDto getNewsDto = service.getPage(page, perPage);
+        return new CustomSuccessResponse<>(200, true, getNewsDto);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(

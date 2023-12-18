@@ -46,4 +46,21 @@ public class TaskService {
     public void deleteAllReadyTasks() {
         repository.deleteAllByStatus(true);
     }
+
+    public GetNewsDto getPage(int page, int perPage) {
+        Page<Task> contentPage = repository.findAll(PageRequest.of(page, perPage));
+
+        List<Task> pageTasks = contentPage.getContent();
+        var notReady = (int) pageTasks.stream()
+                .filter(Task::isStatus)
+                .count();
+
+        GetNewsDto getNewsDto = new GetNewsDto();
+        getNewsDto.setNumberOfElements((int) contentPage.getTotalElements());
+        getNewsDto.setNotReady(notReady);
+        getNewsDto.setReady(getNewsDto.getNumberOfElements() - notReady);
+        getNewsDto.setContent(pageTasks);
+
+        return getNewsDto;
+    }
 }
