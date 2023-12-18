@@ -1,7 +1,10 @@
 package DVitushkin.Vitushkin_Todo_List.controller;
 
+import DVitushkin.Vitushkin_Todo_List.dto.ChangeStatusTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.CreateTodoDto;
+import DVitushkin.Vitushkin_Todo_List.dto.GetNewsDto;
 import DVitushkin.Vitushkin_Todo_List.models.Task;
+import DVitushkin.Vitushkin_Todo_List.response.BaseSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.service.TaskService;
 import jakarta.validation.Valid;
@@ -17,7 +20,7 @@ import java.util.Map;
 @RestController
 public class TaskController {
     @Autowired
-    private TaskService service;
+    private final TaskService service;
 
     public TaskController(TaskService service) {
         this.service = service;
@@ -30,6 +33,19 @@ public class TaskController {
         return new CustomSuccessResponse<>(200, true, service.saveTask(task));
     }
 
+    //    PATCH /v1/todo patch
+    @PatchMapping("v1/todo")
+    public BaseSuccessResponse changeStatus(@RequestBody ChangeStatusTodoDto changeStatusTodoDto) {
+        service.updateStatusForAll(changeStatusTodoDto.isStatus());
+        return new BaseSuccessResponse(200, true);
+    }
+
+    //    DELETE /v1/todo deleteAllReady
+    @DeleteMapping("v1/todo")
+    public BaseSuccessResponse deleteAllReady() {
+        service.deleteAllReadyTasks();
+        return new BaseSuccessResponse(200, true);
+    }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(

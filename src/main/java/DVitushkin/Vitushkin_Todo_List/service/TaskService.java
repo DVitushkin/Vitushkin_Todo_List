@@ -39,4 +39,11 @@ public class TaskService {
 
         return repository.save(updatedTask);
     }
+    public void updateStatusForAll(boolean status) {
+        repository.changeStatusForAll(status);
+    }
+
+    public void deleteAllReadyTasks() {
+        repository.deleteAllByStatus(true);
+    }
 }
