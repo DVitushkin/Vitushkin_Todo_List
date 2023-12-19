@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -40,9 +39,9 @@ public class TaskService {
 
         return repository.save(updatedTask);
     }
+
     public void updateStatusForAll(boolean status) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        repository.changeStatusForAll(status, timestamp);
+        repository.changeStatusForAll(status);
     }
 
     public void deleteAllReadyTasks() {
@@ -68,13 +67,11 @@ public class TaskService {
 
 
     public void setStatusById(int id, boolean status) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        repository.setStatusById(id, status, timestamp);
+        repository.setStatusById(id, status);
     }
 
     public void setTextById(int id, String text) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        repository.setTextById(id, text, timestamp);
+        repository.setTextById(id, text);
     }
 
     public void deleteTaskById(int id) {

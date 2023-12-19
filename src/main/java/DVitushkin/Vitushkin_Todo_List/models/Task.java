@@ -3,7 +3,7 @@ package DVitushkin.Vitushkin_Todo_List.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -24,6 +24,6 @@ public class Task {
     private String text;
     @CreatedDate
     private LocalDateTime createdAt;
-    @LastModifiedBy
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 }
