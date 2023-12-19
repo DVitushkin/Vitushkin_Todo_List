@@ -11,5 +11,4 @@ public class VitushkinTodoListApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(VitushkinTodoListApplication.class, args);
 	}
-
 }

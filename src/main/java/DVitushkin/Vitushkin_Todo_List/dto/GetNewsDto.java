@@ -1,9 +1,9 @@
 package DVitushkin.Vitushkin_Todo_List.dto;
 
+import java.util.List;
+
 import DVitushkin.Vitushkin_Todo_List.models.Task;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class GetNewsDto {

@@ -1,6 +1,7 @@
 package DVitushkin.Vitushkin_Todo_List.response;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

@@ -1,14 +1,15 @@
 package DVitushkin.Vitushkin_Todo_List.service;
 
+import java.util.List;
+
 import DVitushkin.Vitushkin_Todo_List.dto.GetNewsDto;
 import DVitushkin.Vitushkin_Todo_List.models.Task;
 import DVitushkin.Vitushkin_Todo_List.repository.TaskRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class TaskService {
