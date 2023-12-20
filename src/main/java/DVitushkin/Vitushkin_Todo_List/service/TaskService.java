@@ -2,6 +2,7 @@ package DVitushkin.Vitushkin_Todo_List.service;
 
 import java.util.List;
 
+import DVitushkin.Vitushkin_Todo_List.response.BaseSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.CreateTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetNewsDto;
@@ -46,12 +47,14 @@ public class TaskService {
         return repository.save(updatedTask);
     }
 
-    public void updateStatusForAll(boolean status) {
+    public BaseSuccessResponse updateStatusForAll(boolean status) {
         repository.changeStatusForAll(status);
+        return new BaseSuccessResponse(200, true);
     }
 
-    public void deleteAllReadyTasks() {
+    public BaseSuccessResponse deleteAllReadyTasks() {
         repository.deleteAllByStatus(true);
+        return new BaseSuccessResponse(200, true);
     }
 
     public CustomSuccessResponse<GetNewsDto> getPage(int page, int perPage, boolean status) {
@@ -73,15 +76,18 @@ public class TaskService {
     }
 
 
-    public void setStatusById(int id, boolean status) {
+    public BaseSuccessResponse setStatusById(int id, boolean status) {
         repository.setStatusById(id, status);
+        return new BaseSuccessResponse(200, true);
     }
 
-    public void setTextById(int id, String text) {
+    public BaseSuccessResponse setTextById(int id, String text) {
         repository.setTextById(id, text);
+        return new BaseSuccessResponse(200, true);
     }
 
-    public void deleteTaskById(int id) {
+    public BaseSuccessResponse deleteTaskById(int id) {
         repository.deleteById((long) id);
+        return new BaseSuccessResponse(200, true);
     }
 }
