@@ -1,4 +1,4 @@
-package DVitushkin.Vitushkin_Todo_List.dto;
+package DVitushkin.Vitushkin_Todo_List.dto.taskDto;
 
 import java.util.List;
 

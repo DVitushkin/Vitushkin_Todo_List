@@ -2,7 +2,9 @@ package DVitushkin.Vitushkin_Todo_List.service;
 
 import java.util.List;
 
-import DVitushkin.Vitushkin_Todo_List.dto.GetNewsDto;
+import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
+import DVitushkin.Vitushkin_Todo_List.dto.taskDto.CreateTodoDto;
+import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetNewsDto;
 import DVitushkin.Vitushkin_Todo_List.models.Task;
 import DVitushkin.Vitushkin_Todo_List.repository.TaskRepository;
 
@@ -17,8 +19,11 @@ public class TaskService {
     @Autowired
     private TaskRepository repository;
 
-    public Task saveTask(Task task) {
-        return repository.save(task);
+    public CustomSuccessResponse<Task> saveTask(CreateTodoDto createTodoDto) {
+        Task task = new Task();
+        task.setText(createTodoDto.getText());
+
+        return new CustomSuccessResponse<>(repository.save(task), 0, true);
     }
 
     public List<Task> getTasks() {
@@ -49,7 +54,7 @@ public class TaskService {
         repository.deleteAllByStatus(true);
     }
 
-    public GetNewsDto getPage(int page, int perPage) {
+    public CustomSuccessResponse<GetNewsDto> getPage(int page, int perPage) {
         Page<Task> contentPage = repository.findAll(PageRequest.of(page, perPage));
 
         List<Task> pageTasks = contentPage.getContent();
@@ -63,7 +68,7 @@ public class TaskService {
         getNewsDto.setReady(getNewsDto.getNumberOfElements() - notReady);
         getNewsDto.setContent(pageTasks);
 
-        return getNewsDto;
+        return new CustomSuccessResponse<>(getNewsDto, 200, true);
     }
 
 
