@@ -1,9 +1,11 @@
 package DVitushkin.Vitushkin_Todo_List.exception;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import DVitushkin.Vitushkin_Todo_List.response.ErrResponse;
+import DVitushkin.Vitushkin_Todo_List.response.MultiErrorResponse;
 import org.postgresql.util.PSQLException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -17,21 +19,30 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionApiHandler {
 
-    private static String parseValidateErrors(MethodArgumentNotValidException ex) {
+    private static List<String> parseValidateErrors(MethodArgumentNotValidException ex) {
         return ex.getBindingResult()
                 .getAllErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList()
-                .get(0);
+                .toList();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrResponse> handleValidationExceptions(
+    public ResponseEntity<AbstractErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        String errsMsgs = parseValidateErrors(ex);
-        return new ResponseEntity<>(new ErrResponse(errsMsgs, ErrorMsg.getErrCodeByErrMsg(errsMsgs), true), HttpStatus.BAD_REQUEST);
+        List<String> errsMsgs = parseValidateErrors(ex);
+        if (errsMsgs.size() == 1) {
+            var err = errsMsgs.get(0);
+            return new ResponseEntity<>(new ErrResponse(err, ErrorMsg.getErrCodeByErrMsg(err), true), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(new MultiErrorResponse(errsMsgs,
+                                                            errsMsgs
+                                                                    .stream()
+                                                                    .map(ErrorMsg::getErrCodeByErrMsg)
+                                                                    .toList(),
+                                                            true),
+                                    HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

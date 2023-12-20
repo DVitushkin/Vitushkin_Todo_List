@@ -54,8 +54,8 @@ public class TaskService {
         repository.deleteAllByStatus(true);
     }
 
-    public CustomSuccessResponse<GetNewsDto> getPage(int page, int perPage) {
-        Page<Task> contentPage = repository.findAll(PageRequest.of(page, perPage));
+    public CustomSuccessResponse<GetNewsDto> getPage(int page, int perPage, boolean status) {
+        Page<Task> contentPage = repository.findAllByStatus(status, PageRequest.of(page-1, perPage));
 
         List<Task> pageTasks = contentPage.getContent();
         var notReady = (int) pageTasks.stream()
@@ -66,9 +66,10 @@ public class TaskService {
         getNewsDto.setNumberOfElements((int) contentPage.getTotalElements());
         getNewsDto.setNotReady(notReady);
         getNewsDto.setReady(getNewsDto.getNumberOfElements() - notReady);
+
         getNewsDto.setContent(pageTasks);
 
-        return new CustomSuccessResponse<>(getNewsDto, 200, true);
+        return new CustomSuccessResponse<>(getNewsDto, 1, true);
     }
 
 
