@@ -1,10 +1,10 @@
 package DVitushkin.Vitushkin_Todo_List.response;
 
+import java.util.List;
+
 import DVitushkin.Vitushkin_Todo_List.exception.AbstractErrorResponse;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
 @Data
 public class MultiErrorResponse implements AbstractErrorResponse {
     private List<String> errsMsgs;

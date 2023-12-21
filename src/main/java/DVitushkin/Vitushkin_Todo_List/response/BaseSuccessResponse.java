@@ -1,6 +1,7 @@
 package DVitushkin.Vitushkin_Todo_List.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Data
 @AllArgsConstructor

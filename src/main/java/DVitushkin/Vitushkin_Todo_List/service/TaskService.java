@@ -2,12 +2,14 @@ package DVitushkin.Vitushkin_Todo_List.service;
 
 import java.util.List;
 
-import DVitushkin.Vitushkin_Todo_List.response.BaseSuccessResponse;
-import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
+import DVitushkin.Vitushkin_Todo_List.dto.taskDto.ChangeTextTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.CreateTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetNewsDto;
 import DVitushkin.Vitushkin_Todo_List.models.Task;
 import DVitushkin.Vitushkin_Todo_List.repository.TaskRepository;
+import DVitushkin.Vitushkin_Todo_List.response.BaseSuccessResponse;
+import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
+import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,7 +60,7 @@ public class TaskService {
     }
 
     public CustomSuccessResponse<GetNewsDto> getPage(int page, int perPage, boolean status) {
-        Page<Task> contentPage = repository.findAllByStatus(status, PageRequest.of(page-1, perPage));
+        Page<Task> contentPage = repository.findAllByStatus(status, PageRequest.of(page - 1, perPage));
 
         List<Task> pageTasks = contentPage.getContent();
         var notReady = (int) pageTasks.stream()
@@ -75,19 +77,27 @@ public class TaskService {
         return new CustomSuccessResponse<>(getNewsDto, 1, true);
     }
 
-
-    public BaseSuccessResponse setStatusById(int id, boolean status) {
+    public BaseSuccessResponse setStatusById(Long id, boolean status) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException();
+        }
         repository.setStatusById(id, status);
         return new BaseSuccessResponse(200, true);
     }
 
-    public BaseSuccessResponse setTextById(int id, String text) {
-        repository.setTextById(id, text);
+    public BaseSuccessResponse setTextById(Long id, ChangeTextTodoDto changeTextTodoDto) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException();
+        }
+        repository.setTextById(id, changeTextTodoDto.getText());
         return new BaseSuccessResponse(200, true);
     }
 
-    public BaseSuccessResponse deleteTaskById(int id) {
-        repository.deleteById((long) id);
+    public BaseSuccessResponse deleteTaskById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException();
+        }
+        repository.deleteById(id);
         return new BaseSuccessResponse(200, true);
     }
 }

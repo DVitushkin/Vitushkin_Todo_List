@@ -6,14 +6,19 @@ import java.util.Map;
 
 import DVitushkin.Vitushkin_Todo_List.response.ErrResponse;
 import DVitushkin.Vitushkin_Todo_List.response.MultiErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
+
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 
 @RestControllerAdvice
@@ -29,8 +34,7 @@ public class ExceptionApiHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<AbstractErrorResponse> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
+    public ResponseEntity<AbstractErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errsMsgs = parseValidateErrors(ex);
         if (errsMsgs.size() == 1) {
             var err = errsMsgs.get(0);
@@ -45,10 +49,45 @@ public class ExceptionApiHandler {
                                     HttpStatus.BAD_REQUEST);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<AbstractErrorResponse> handleHttpMessageNotReadableExceptions(
+            HttpMessageNotReadableException ex) {
+        return new ResponseEntity<>(new ErrResponse(ErrorMsg.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getMsg(),
+                                                    ErrorMsg.getErrCodeByErrMsg(ErrorMsg.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getMsg()),
+                                            true),
+                                    HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<AbstractErrorResponse> handleEntityNotFoundExceptions(EntityNotFoundException ex) {
+        return new ResponseEntity<>(new ErrResponse(ErrorMsg.TASK_NOT_FOUND.getMsg(),
+                                                    ErrorMsg.getErrCodeByErrMsg(ErrorMsg.TASK_NOT_FOUND.getMsg()),
+                                            true),
+                                    HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<AbstractErrorResponse> handleHandlerMethodValidationExceptions(HandlerMethodValidationException ex) {
+        return new ResponseEntity<>(new ErrResponse(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg(),
+                ErrorMsg.getErrCodeByErrMsg(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg()),
+                true),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<AbstractErrorResponse> handleConstraintViolationExceptions(ConstraintViolationException ex) {
+        return new ResponseEntity<>(new ErrResponse(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg(),
+                ErrorMsg.getErrCodeByErrMsg(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg()),
+                true),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(PSQLException.class)
-    public Map<String, String> handlePSQLExceptions(
-            PSQLException ex) {
+    public Map<String, String> handlePSQLExceptions(PSQLException ex) {
 
         Map<String, String> errors = new HashMap<>();
         errors.put("Error", "None");

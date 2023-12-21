@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     Page<Task> findAllByStatus(boolean status, Pageable pageable);
@@ -29,10 +27,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE Task SET status = :status, updatedAt = current_timestamp() WHERE id = :id")
-    void setStatusById(@Param("id") int id, @Param("status") boolean status);
+    void setStatusById(@Param("id") Long id, @Param("status") boolean status);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE Task SET text = :text, updatedAt = current_timestamp() WHERE id = :id")
-    void setTextById(@Param("id") int id, @Param("text") String  text);
+    void setTextById(@Param("id") Long id, @Param("text") String  text);
 }
