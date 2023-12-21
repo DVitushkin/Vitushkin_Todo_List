@@ -7,7 +7,6 @@ import java.util.Map;
 import DVitushkin.Vitushkin_Todo_List.response.ErrResponse;
 import DVitushkin.Vitushkin_Todo_List.response.MultiErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -32,7 +31,6 @@ public class ExceptionApiHandler {
                 .toList();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<AbstractErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errsMsgs = parseValidateErrors(ex);
@@ -49,7 +47,6 @@ public class ExceptionApiHandler {
                                     HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<AbstractErrorResponse> handleHttpMessageNotReadableExceptions(
             HttpMessageNotReadableException ex) {
@@ -59,7 +56,6 @@ public class ExceptionApiHandler {
                                     HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<AbstractErrorResponse> handleEntityNotFoundExceptions(EntityNotFoundException ex) {
         return new ResponseEntity<>(new ErrResponse(ErrorMsg.TASK_NOT_FOUND.getMsg(),
@@ -68,17 +64,9 @@ public class ExceptionApiHandler {
                                     HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<AbstractErrorResponse> handleHandlerMethodValidationExceptions(HandlerMethodValidationException ex) {
-        return new ResponseEntity<>(new ErrResponse(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg(),
-                ErrorMsg.getErrCodeByErrMsg(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg()),
-                true),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<AbstractErrorResponse> handleConstraintViolationExceptions(ConstraintViolationException ex) {
         return new ResponseEntity<>(new ErrResponse(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg(),
                 ErrorMsg.getErrCodeByErrMsg(ErrorMsg.ID_MUST_BE_POSITIVE.getMsg()),
                 true),
