@@ -9,7 +9,6 @@ import DVitushkin.Vitushkin_Todo_List.models.Task;
 import DVitushkin.Vitushkin_Todo_List.response.BaseSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.service.TaskService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
