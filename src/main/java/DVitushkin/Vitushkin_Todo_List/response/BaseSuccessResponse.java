@@ -1,11 +1,18 @@
 package DVitushkin.Vitushkin_Todo_List.response;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
-@AllArgsConstructor
 public class BaseSuccessResponse {
-    protected   long statusCode;
-    protected   boolean success;
+    private Integer statusCode;
+    private Boolean success;
+
+    public static BaseSuccessResponse ok() {
+        return BaseSuccessResponse.builder()
+                .statusCode(1)
+                .success(true)
+                .build();
+    }
 }

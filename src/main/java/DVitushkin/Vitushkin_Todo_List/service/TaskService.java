@@ -2,6 +2,7 @@ package DVitushkin.Vitushkin_Todo_List.service;
 
 import java.util.List;
 
+import DVitushkin.Vitushkin_Todo_List.dto.taskDto.ChangeStatusTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.ChangeTextTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.CreateTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetNewsDto;
@@ -26,40 +27,20 @@ public class TaskService {
         Task task = new Task();
         task.setText(createTodoDto.getText());
 
-        return new CustomSuccessResponse<>(repository.save(task), 0, true);
+        return CustomSuccessResponse.data(repository.save(task));
     }
 
-    public List<Task> getTasks() {
-        return repository.findAll();
-    }
-
-    public Task getTaskById(long id) {
-        return repository.findById(id).orElseThrow();
-    }
-
-    public Task updateTask(Task task) {
-        long id = task.getId();
-        Task updatedTask = repository.getReferenceById(id);
-
-        updatedTask.setText(task.getText());
-        updatedTask.setStatus(task.isStatus());
-        updatedTask.setCreatedAt(task.getCreatedAt());
-        updatedTask.setUpdatedAt(task.getUpdatedAt());
-
-        return repository.save(updatedTask);
-    }
-
-    public BaseSuccessResponse updateStatusForAll(boolean status) {
+    public BaseSuccessResponse updateStatusForAll(Boolean status) {
         repository.changeStatusForAll(status);
-        return new BaseSuccessResponse(200, true);
+        return BaseSuccessResponse.ok();
     }
 
     public BaseSuccessResponse deleteAllReadyTasks() {
         repository.deleteAllByStatus(true);
-        return new BaseSuccessResponse(200, true);
+        return BaseSuccessResponse.ok();
     }
 
-    public CustomSuccessResponse<GetNewsDto> getPage(int page, int perPage, boolean status) {
+    public CustomSuccessResponse<GetNewsDto> getPage(Integer page, Integer perPage, Boolean status) {
         Page<Task> contentPage = repository.findAllByStatus(status, PageRequest.of(page - 1, perPage));
 
         List<Task> pageTasks = contentPage.getContent();
@@ -74,15 +55,15 @@ public class TaskService {
 
         getNewsDto.setContent(pageTasks);
 
-        return new CustomSuccessResponse<>(getNewsDto, 1, true);
+        return CustomSuccessResponse.data(getNewsDto);
     }
 
-    public BaseSuccessResponse setStatusById(Long id, boolean status) {
+    public BaseSuccessResponse setStatusById(Long id, ChangeStatusTodoDto changeStatusTodoDto) {
         if (!repository.existsById(id)) {
             throw new EntityNotFoundException();
         }
-        repository.setStatusById(id, status);
-        return new BaseSuccessResponse(200, true);
+        repository.setStatusById(id, changeStatusTodoDto.getStatus());
+        return BaseSuccessResponse.ok();
     }
 
     public BaseSuccessResponse setTextById(Long id, ChangeTextTodoDto changeTextTodoDto) {
@@ -90,7 +71,7 @@ public class TaskService {
             throw new EntityNotFoundException();
         }
         repository.setTextById(id, changeTextTodoDto.getText());
-        return new BaseSuccessResponse(200, true);
+        return BaseSuccessResponse.ok();
     }
 
     public BaseSuccessResponse deleteTaskById(Long id) {
@@ -98,6 +79,6 @@ public class TaskService {
             throw new EntityNotFoundException();
         }
         repository.deleteById(id);
-        return new BaseSuccessResponse(200, true);
+        return BaseSuccessResponse.ok();
     }
 }
