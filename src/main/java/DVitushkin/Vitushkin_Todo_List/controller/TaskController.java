@@ -4,12 +4,15 @@ import DVitushkin.Vitushkin_Todo_List.dto.taskDto.ChangeStatusTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.ChangeTextTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.CreateTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetNewsDto;
-import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetPaginatedTaskDto;
 import DVitushkin.Vitushkin_Todo_List.exception.ErrorsMsg;
 import DVitushkin.Vitushkin_Todo_List.models.Task;
 import DVitushkin.Vitushkin_Todo_List.response.BaseSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.service.TaskService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -46,12 +50,17 @@ public class TaskController {
     }
 
     @GetMapping("v1/todo")
-    public ResponseEntity<CustomSuccessResponse<GetNewsDto>> getPaginated(@Validated GetPaginatedTaskDto getPaginatedTaskDto) {
-        return new ResponseEntity<>(service.getPage(getPaginatedTaskDto.getPage(),
-                                                    getPaginatedTaskDto.getPerPage(),
-                                                    getPaginatedTaskDto.getStatus()
-                                                    ),
-                                    HttpStatus.OK);
+    @Validated
+    public ResponseEntity<CustomSuccessResponse<GetNewsDto>> getPaginated(@RequestParam("page")
+                                                                          @Min(value = 1, message = ErrorsMsg.TASKS_PAGE_GREATER_OR_EQUAL_1)
+                                                                          Integer page,
+                                                                          @RequestParam("perPage")
+                                                                          @Min(value = 1, message = ErrorsMsg.TASKS_PER_PAGE_GREATER_OR_EQUAL_1)
+                                                                          @Max(value = 100, message = ErrorsMsg.TASKS_PER_PAGE_LESS_OR_EQUAL_100)
+                                                                          Integer perPage,
+                                                                          @RequestParam("status") @NotNull(message = ErrorsMsg.TODO_STATUS_NOT_NULL)
+                                                                          Boolean status) {
+        return new ResponseEntity<>(service.getPage(page, perPage, status),HttpStatus.OK);
     }
 
     @PatchMapping("v1/todo/status/{id}")
