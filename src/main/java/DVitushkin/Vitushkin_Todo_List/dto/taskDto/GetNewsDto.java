@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class GetNewsDto {
     private List<Task> content;
-    private int notReady;
-    private int numberOfElements;
-    private int ready;
+    private Integer notReady;
+    private Integer numberOfElements;
+    private Integer ready;
 }

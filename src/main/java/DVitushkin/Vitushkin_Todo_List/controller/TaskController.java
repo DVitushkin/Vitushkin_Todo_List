@@ -5,14 +5,14 @@ import DVitushkin.Vitushkin_Todo_List.dto.taskDto.ChangeTextTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.CreateTodoDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetNewsDto;
 import DVitushkin.Vitushkin_Todo_List.dto.taskDto.GetPaginatedTaskDto;
+import DVitushkin.Vitushkin_Todo_List.exception.ErrorsMsg;
 import DVitushkin.Vitushkin_Todo_List.models.Task;
 import DVitushkin.Vitushkin_Todo_List.response.BaseSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.response.CustomSuccessResponse;
 import DVitushkin.Vitushkin_Todo_List.service.TaskService;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +25,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Data
+@RequiredArgsConstructor
 public class TaskController {
-    @Autowired
-    TaskService service;
+
+    private final TaskService service;
 
     @PostMapping("/v1/todo")
     public ResponseEntity<CustomSuccessResponse<Task>> addTask(@Validated @RequestBody CreateTodoDto createTodoDto) {
@@ -49,7 +49,7 @@ public class TaskController {
     public ResponseEntity<CustomSuccessResponse<GetNewsDto>> getPaginated(@Validated GetPaginatedTaskDto getPaginatedTaskDto) {
         return new ResponseEntity<>(service.getPage(getPaginatedTaskDto.getPage(),
                                                     getPaginatedTaskDto.getPerPage(),
-                                                    getPaginatedTaskDto.isStatus()
+                                                    getPaginatedTaskDto.getStatus()
                                                     ),
                                     HttpStatus.OK);
     }
@@ -57,15 +57,15 @@ public class TaskController {
     @PatchMapping("v1/todo/status/{id}")
     public ResponseEntity<BaseSuccessResponse> patchStatusById(@Validated
                                                                    @PathVariable("id")
-                                                                   @Positive(message = "ID must be grater than zero")  Long id,
+                                                                   @Positive(message = ErrorsMsg.ID_MUST_BE_POSITIVE)  Long id,
                                                                @Validated @RequestBody ChangeStatusTodoDto changeStatusTodoDto) {
-        return new ResponseEntity<>(service.setStatusById(id, changeStatusTodoDto.getStatus()), HttpStatus.OK);
+        return new ResponseEntity<>(service.setStatusById(id, changeStatusTodoDto), HttpStatus.OK);
     }
 
     @PatchMapping("v1/todo/text/{id}")
     public ResponseEntity<BaseSuccessResponse> patchTextById(@Validated
                                                                  @PathVariable("id")
-                                                                 @Positive(message = "ID must be grater than zero")  Long id,
+                                                                 @Positive(message = ErrorsMsg.ID_MUST_BE_POSITIVE)  Long id,
                                                              @Validated @RequestBody ChangeTextTodoDto changeTextTodoDto) {
         return new ResponseEntity<>(service.setTextById(id, changeTextTodoDto), HttpStatus.OK);
     }
@@ -73,7 +73,7 @@ public class TaskController {
     @DeleteMapping("v1/todo/{id}")
     public ResponseEntity<BaseSuccessResponse> deleteTaskById(@Validated
                                                                   @PathVariable("id")
-                                                                  @Positive(message = "ID must be grater than zero") Long id) {
+                                                                  @Positive(message = ErrorsMsg.ID_MUST_BE_POSITIVE) Long id) {
         return new ResponseEntity<>(service.deleteTaskById(id), HttpStatus.OK);
     }
 }

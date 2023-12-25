@@ -12,22 +12,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    Page<Task> findAllByStatus(boolean status, Pageable pageable);
+    Page<Task> findAllByStatus(Boolean status, Pageable pageable);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE Task SET status = :status, updatedAt = current_timestamp()")
-    void changeStatusForAll(@Param("status") boolean status);
+    void changeStatusForAll(@Param("status") Boolean status);
 
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM Task WHERE status = :status")
-    void deleteAllByStatus(boolean status);
+    void deleteAllByStatus(Boolean status);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE Task SET status = :status, updatedAt = current_timestamp() WHERE id = :id")
-    void setStatusById(@Param("id") Long id, @Param("status") boolean status);
+    void setStatusById(@Param("id") Long id, @Param("status") Boolean status);
 
     @Modifying
     @Transactional
